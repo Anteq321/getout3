@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Button</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        button {
+            padding: 20px 40px;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+            background-color: white;
+            border: 2px solid black;
+            cursor: pointer;
+            outline: none;
+        }
+        button:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <button id="playButton">CLICK ME</button>
+
+    <script>
+        // Funkcja do odtwarzania dźwięku
+        function playSound() {
+            var audio = new Audio('https://raw.githubusercontent.com/anteq321/nfcgetout2/main/Get-out-meme.mp3'); // Link do GitHub
+            audio.volume = 1.0; // Maksymalna głośność
+            audio.play()
+                .catch(function(error) {
+                    console.log("Nie udało się odtworzyć dźwięku: ", error);
+                });
+        }
+
+        // Automatyczne próby podgłośnienia
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.navigator !== 'undefined') {
+                try {
+                    // Zwiększenie głośności na urządzeniu
+                    var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    var gainNode = audioContext.createGain();
+                    gainNode.gain.setValueAtTime(1.0, audioContext.currentTime);
+                    var oscillator = audioContext.createOscillator();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                } catch (e) {
+                    console.log("Nie udało się automatycznie podgłośnić urządzenia.");
+                }
+            }
+        });
+
+        // Obsługa kliknięcia przycisku
+        document.getElementById("playButton").addEventListener("click", playSound);
+    </script>
+</body>
+</html>
